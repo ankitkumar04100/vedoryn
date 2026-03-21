@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Brain, TrendingUp, Target, Briefcase, Mic, BookOpen, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { CareerScore3D } from "@/components/dashboard/CareerScore3D";
 
 const careerScore = 72;
 
@@ -25,26 +26,32 @@ const quickActions = [
   { label: "Browse Jobs", icon: Briefcase, href: "/dashboard/jobs", color: "bg-vedoryn-green/10 text-vedoryn-green hover:bg-vedoryn-green/20" },
 ];
 
-export default function DashboardOverview() {
-  const circumference = 2 * Math.PI * 40;
-  const offset = circumference - (careerScore / 100) * circumference;
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.06 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0 },
+};
 
+export default function DashboardOverview() {
   return (
-    <div className="space-y-8 max-w-6xl">
-      <div>
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-8 max-w-6xl">
+      <motion.div variants={item}>
         <h1 className="font-display text-3xl font-bold">Welcome back! 👋</h1>
         <p className="text-muted-foreground mt-1">Here's your career intelligence overview.</p>
-      </div>
+      </motion.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {quickStats.map((stat, i) => (
+        {quickStats.map((stat) => (
           <motion.div
             key={stat.label}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
-            className="p-5 rounded-xl bg-card border border-border shadow-card"
+            variants={item}
+            whileHover={{ scale: 1.03, y: -2 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="p-5 rounded-xl bg-card border border-border shadow-card hover:shadow-elevated transition-shadow cursor-default"
           >
             <div className="flex items-center justify-between mb-3">
               <div className={`w-10 h-10 rounded-lg ${stat.bg} flex items-center justify-center`}>
@@ -59,48 +66,28 @@ export default function DashboardOverview() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Career Score Ring */}
+        {/* 3D Career Score */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="p-6 rounded-xl bg-card border border-border shadow-card flex flex-col items-center"
+          variants={item}
+          className="p-6 rounded-xl bg-card border border-border shadow-card flex flex-col items-center relative overflow-hidden"
         >
-          <h3 className="font-display font-semibold text-lg mb-4">Career Score</h3>
-          <div className="relative mb-4">
-            <svg width="160" height="160" className="-rotate-90">
-              <circle cx="80" cy="80" r="40" fill="none" className="stroke-secondary" strokeWidth="8" transform="scale(1.8) translate(-36, -36)" />
-              <circle
-                cx="80" cy="80" r="40" fill="none" className="stroke-primary"
-                strokeWidth="8" strokeLinecap="round"
-                strokeDasharray={circumference} strokeDashoffset={offset}
-                transform="scale(1.8) translate(-36, -36)"
-                style={{ transition: "stroke-dashoffset 2s ease-out" }}
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="font-display text-4xl font-bold text-gradient-score">{careerScore}</span>
-              <span className="text-xs text-muted-foreground">Competitive</span>
-            </div>
-          </div>
-          <Link to="/dashboard/career-score" className="text-sm text-primary font-medium flex items-center gap-1 hover:underline">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-vedoryn-cyan/5" />
+          <h3 className="font-display font-semibold text-lg mb-2 relative z-10">Career Score</h3>
+          <CareerScore3D score={careerScore} className="relative z-10 max-w-[200px]" />
+          <Link to="/dashboard/career-score" className="text-sm text-primary font-medium flex items-center gap-1 hover:underline relative z-10 mt-2">
             View Details <ArrowUpRight className="w-3 h-3" />
           </Link>
         </motion.div>
 
         {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="p-6 rounded-xl bg-card border border-border shadow-card"
-        >
+        <motion.div variants={item} className="p-6 rounded-xl bg-card border border-border shadow-card">
           <h3 className="font-display font-semibold text-lg mb-4">Quick Actions</h3>
           <div className="space-y-3">
             {quickActions.map((a) => (
               <Link
                 key={a.label}
                 to={a.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${a.color}`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:translate-x-1 duration-200 ${a.color}`}
               >
                 <a.icon className="w-5 h-5" />
                 <span className="font-medium text-sm">{a.label}</span>
@@ -110,26 +97,27 @@ export default function DashboardOverview() {
         </motion.div>
 
         {/* Recent Activity */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="p-6 rounded-xl bg-card border border-border shadow-card"
-        >
+        <motion.div variants={item} className="p-6 rounded-xl bg-card border border-border shadow-card">
           <h3 className="font-display font-semibold text-lg mb-4">Recent Activity</h3>
           <div className="space-y-4">
             {recentActivity.map((a, i) => (
-              <div key={i} className="flex items-start justify-between">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 + i * 0.08 }}
+                className="flex items-start justify-between"
+              >
                 <div>
                   <div className="text-sm font-medium">{a.action}</div>
                   <div className="text-xs text-muted-foreground">{a.time}</div>
                 </div>
                 <span className="text-xs font-medium text-vedoryn-green">{a.points}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
