@@ -2,12 +2,16 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, TrendingUp, Zap } from "lucide-react";
+import { ParticleField } from "./ParticleField";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-      {/* Background orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* 3D Particle Background */}
+      <ParticleField />
+
+      {/* Gradient orbs behind particles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-vedoryn-cyan/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
         <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-vedoryn-pink/8 rounded-full blur-3xl animate-float" style={{ animationDelay: "4s" }} />
@@ -19,9 +23,9 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-primary/20 text-primary text-sm font-medium mb-8"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 animate-pulse" />
             AI-Powered Career Intelligence
           </motion.div>
 
@@ -52,13 +56,13 @@ export function HeroSection() {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link to="/dashboard">
-              <Button size="lg" className="bg-gradient-hero text-primary-foreground font-semibold text-base px-8 hover:opacity-90 transition-opacity shadow-glow">
+              <Button size="lg" className="bg-gradient-hero text-primary-foreground font-semibold text-base px-8 hover:opacity-90 transition-all shadow-glow hover:shadow-elevated hover:scale-105 duration-300">
                 Start Your Journey
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
             <a href="#how-it-works">
-              <Button size="lg" variant="outline" className="font-semibold text-base px-8">
+              <Button size="lg" variant="outline" className="font-semibold text-base px-8 glass hover:scale-105 transition-all duration-300">
                 See How It Works
               </Button>
             </a>
@@ -75,12 +79,17 @@ export function HeroSection() {
               { icon: TrendingUp, label: "Career Score", value: "AI-Powered" },
               { icon: Zap, label: "Real-Time", value: "Predictions" },
               { icon: Sparkles, label: "Smart", value: "Roadmaps" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                whileHover={{ scale: 1.1, y: -4 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="text-center glass rounded-xl p-4 cursor-default"
+              >
                 <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="font-display font-bold text-foreground">{stat.value}</div>
                 <div className="text-xs text-muted-foreground">{stat.label}</div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
