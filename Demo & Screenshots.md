@@ -97,11 +97,13 @@
 ---
 
 ## Mental wellness check
+
 <img width="1920" height="888" alt="Screenshot (225)" src="https://github.com/user-attachments/assets/c8f54b74-c41f-4004-8989-d1e8a4191a25" />
 
 ---
 
 ## Personalized Dashboard
+
 <img width="1920" height="860" alt="Screenshot (226)" src="https://github.com/user-attachments/assets/47a86210-6196-4ad2-a735-52f612f33e5e" />
 
 ---
@@ -112,54 +114,64 @@
 ---
 
 ## Career Roadmap
+
 <img width="1920" height="895" alt="Screenshot (228)" src="https://github.com/user-attachments/assets/2ea513bc-c954-4431-8a57-050e9ac847f5" />
 
 ---
 
 ## AI Interviews
+
 <img width="1920" height="872" alt="Screenshot (229)" src="https://github.com/user-attachments/assets/f18692e4-adcd-4f38-a1e9-2f707d51f38c" />
 
 ---
 
 ## Jobs & Internships
+
 <img width="1920" height="891" alt="Screenshot (230)" src="https://github.com/user-attachments/assets/83127845-9491-4561-a910-72cd8154e0d2" />
 
 ---
 
 ## Study Planner
+
 <img width="1920" height="864" alt="Screenshot (231)" src="https://github.com/user-attachments/assets/a6465fa1-179f-45b1-9012-c30e5bb5ecc9" />
 
 ---
 
 # Scholarships
+
 <img width="1920" height="880" alt="Screenshot (232)" src="https://github.com/user-attachments/assets/5e0ddb94-9369-4eb5-ac48-cb650f0ad01b" />
 
 ---
 
 ## AI Mentor Hub
+
 <img width="1920" height="876" alt="Screenshot (233)" src="https://github.com/user-attachments/assets/fda19893-a686-4bd9-9cac-351dd7494e3d" />
 
 ---
 
 ## Proof Layer
+
 <img width="1920" height="873" alt="Screenshot (234)" src="https://github.com/user-attachments/assets/f03edd3d-41e4-4261-ba0c-07394e623f2b" />
 
 ---
 
 ## Wellness Monitor
+
 <img width="1920" height="882" alt="Screenshot (235)" src="https://github.com/user-attachments/assets/005915cb-ed49-4c97-ab4e-abde34ae58fc" />
 
 ---
 
 ## Gamification
+
 <img width="1920" height="884" alt="Screenshot (236)" src="https://github.com/user-attachments/assets/82ac5e37-7252-4286-893b-5608e6abf6d5" />
 
 ---
 
 ## Recruiter Dashboard
+
 <img width="1920" height="874" alt="Screenshot (237)" src="https://github.com/user-attachments/assets/d6376530-040b-478b-80e0-332c2a896c64" />
 
-
+---
 
 
 
