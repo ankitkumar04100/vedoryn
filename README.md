@@ -16,6 +16,8 @@
 
 - **[Demo Video](https://youtu.be/SjxV4JFc_Fw)**
 
+- **[For Full Demo & Screenshots](Demo & Screenshots.md)**
+
 ---
 
 # 🏆 TABLE OF CONTENTS
