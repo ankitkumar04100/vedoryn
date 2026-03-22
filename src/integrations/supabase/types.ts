@@ -82,51 +82,90 @@ export type Database = {
       }
       profiles: {
         Row: {
+          academic_stream: string | null
+          age: number | null
           avatar_url: string | null
           career_goal: string | null
           career_score: number | null
           created_at: string
+          current_class: string | null
           daily_hours: number | null
           display_name: string | null
+          education_level: string | null
           experience_level: string | null
           id: string
+          interests: string[] | null
+          language_preference: string | null
+          learning_style: string | null
           level: number | null
+          long_term_goal: string | null
+          motivation_level: number | null
           onboarding_complete: boolean | null
+          productivity_level: string | null
           skills: string[] | null
+          stress_level: number | null
+          subjects: string[] | null
           updated_at: string
           user_id: string
+          weak_areas: string[] | null
           xp: number | null
         }
         Insert: {
+          academic_stream?: string | null
+          age?: number | null
           avatar_url?: string | null
           career_goal?: string | null
           career_score?: number | null
           created_at?: string
+          current_class?: string | null
           daily_hours?: number | null
           display_name?: string | null
+          education_level?: string | null
           experience_level?: string | null
           id?: string
+          interests?: string[] | null
+          language_preference?: string | null
+          learning_style?: string | null
           level?: number | null
+          long_term_goal?: string | null
+          motivation_level?: number | null
           onboarding_complete?: boolean | null
+          productivity_level?: string | null
           skills?: string[] | null
+          stress_level?: number | null
+          subjects?: string[] | null
           updated_at?: string
           user_id: string
+          weak_areas?: string[] | null
           xp?: number | null
         }
         Update: {
+          academic_stream?: string | null
+          age?: number | null
           avatar_url?: string | null
           career_goal?: string | null
           career_score?: number | null
           created_at?: string
+          current_class?: string | null
           daily_hours?: number | null
           display_name?: string | null
+          education_level?: string | null
           experience_level?: string | null
           id?: string
+          interests?: string[] | null
+          language_preference?: string | null
+          learning_style?: string | null
           level?: number | null
+          long_term_goal?: string | null
+          motivation_level?: number | null
           onboarding_complete?: boolean | null
+          productivity_level?: string | null
           skills?: string[] | null
+          stress_level?: number | null
+          subjects?: string[] | null
           updated_at?: string
           user_id?: string
+          weak_areas?: string[] | null
           xp?: number | null
         }
         Relationships: []
