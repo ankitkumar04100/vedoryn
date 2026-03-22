@@ -30,55 +30,55 @@
 
 ---
 
-## Pricing
+## Core Innovation
 
 <img width="1920" height="865" alt="Screenshot (211)" src="https://github.com/user-attachments/assets/05f7e4e1-e849-4705-9b59-5089152e2b3b" />
 
 ---
 
-## Overview (Complete onboarding for a personalized experience)
+## Pricing
 
 <img width="1920" height="884" alt="Screenshot (212)" src="https://github.com/user-attachments/assets/50d52eaa-b170-403c-9a5c-5d8b6bc52fcf" />
 
 ---
 
-## Tell us about yourself
+## Sign up & Login
 
 <img width="1920" height="876" alt="Screenshot (238)" src="https://github.com/user-attachments/assets/a56c575e-5635-47d2-a47e-83286eb01dd7" />
 
 ---
 
-## Academic details
+## Overview (Complete onboarding for a personalized experience)
 
 <img width="1920" height="873" alt="Screenshot (216)" src="https://github.com/user-attachments/assets/3e69876b-0424-4671-8383-700a9c29786e" />
 
 ---
 
-## Career goal & interests
+## Tell us about yourself
 
 <img width="1920" height="884" alt="Screenshot (218)" src="https://github.com/user-attachments/assets/36069200-9fd8-4a74-9b2e-5419b6d81bdc" />
 
 ---
 
-## Your current skills
+## Academic details
 
 <img width="1920" height="873" alt="Screenshot (219)" src="https://github.com/user-attachments/assets/59c23ee4-31a7-4f93-8232-82a1acff4711" />
 
 ---
 
-## Experience level
+## Career goal & interests
 
 <img width="1920" height="873" alt="Screenshot (220)" src="https://github.com/user-attachments/assets/5dc233f4-bad1-4b5e-b45d-184743e58e70" />
 
 ---
 
-## Learning preferences
+## Your current skills
 
 <img width="1920" height="871" alt="Screenshot (221)" src="https://github.com/user-attachments/assets/3c2b956e-e5d4-4a8e-a358-7b2a2b130146" />
 
 ---
 
-## Daily availability
+## Experience level
 
 <img width="1920" height="884" alt="Screenshot (222)" src="https://github.com/user-attachments/assets/d9c0ea4c-d692-4385-a049-c2f86d614c24" />
 
