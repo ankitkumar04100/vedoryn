@@ -12,7 +12,9 @@
 
 # Demo 
 
-[VEDORYN APP](https://vedoryn.lovable.app)
+- **[VEDORYN APP](https://vedoryn.lovable.app)**
+
+- **[Demo Video](https://youtu.be/SjxV4JFc_Fw)**
 
 ---
 
