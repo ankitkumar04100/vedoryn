@@ -16,7 +16,7 @@
 
 - **[Demo Video](https://youtu.be/SjxV4JFc_Fw)**
 
-- **[For Full Demo & Screenshots](Demo & Screenshots.md)**
+- **[For Full Demo & Screenshots](https://github.com/ankitkumar04100/vedoryn/blob/main/Demo%20%26%20Screenshots.md)**
 
 ---
 
