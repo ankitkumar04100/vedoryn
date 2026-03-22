@@ -1,5 +1,5 @@
 # 🧠⚡ VEDORYN  
-## 🎮 AI Career Intelligence Operating System  
+## 🎮 AI Career Intelligence    Operating System  
 ### _From Confusion to Control_
 
 <img width="2528" height="1696" alt="Gemini_Generated_Image_983xyc983xyc983x" src="https://github.com/user-attachments/assets/125a12de-1ce0-4566-bbe8-2030064129be" />
