@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 type Profile = {
   id: string;
@@ -16,6 +15,19 @@ type Profile = {
   career_score: number | null;
   xp: number | null;
   level: number | null;
+  age: number | null;
+  education_level: string | null;
+  current_class: string | null;
+  academic_stream: string | null;
+  subjects: string[] | null;
+  weak_areas: string[] | null;
+  stress_level: number | null;
+  motivation_level: number | null;
+  learning_style: string | null;
+  language_preference: string | null;
+  interests: string[] | null;
+  long_term_goal: string | null;
+  productivity_level: string | null;
 };
 
 type AuthContextType = {
@@ -41,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
-    setProfile(data);
+    setProfile(data as Profile | null);
   };
 
   const refreshProfile = async () => {
