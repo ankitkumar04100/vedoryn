@@ -12,7 +12,6 @@ function ScoreRing({ score, radius = 2, thickness = 0.15 }: { score: number; rad
     const shape = new THREE.Shape();
     const outerR = radius;
     const innerR = radius - thickness;
-    
     const segments = 64;
     for (let i = 0; i <= segments; i++) {
       const angle = (i / segments) * arc - Math.PI / 2;
@@ -26,19 +25,13 @@ function ScoreRing({ score, radius = 2, thickness = 0.15 }: { score: number; rad
       shape.lineTo(Math.cos(angle) * innerR, Math.sin(angle) * innerR);
     }
     shape.closePath();
-
-    const extrudeSettings = { depth: 0.08, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 3 };
-    return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    return new THREE.ExtrudeGeometry(shape, { depth: 0.08, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 3 });
   }, [score, radius, thickness]);
 
-  const bgGeometry = useMemo(() => {
-    return new THREE.TorusGeometry(radius - thickness / 2, thickness / 2, 16, 64);
-  }, [radius, thickness]);
+  const bgGeometry = useMemo(() => new THREE.TorusGeometry(radius - thickness / 2, thickness / 2, 16, 64), [radius, thickness]);
 
   useFrame((state) => {
-    if (ringRef.current) {
-      ringRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
-    }
+    if (ringRef.current) ringRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
     if (glowRef.current) {
       const s = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.03;
       glowRef.current.scale.set(s, s, 1);
@@ -47,26 +40,15 @@ function ScoreRing({ score, radius = 2, thickness = 0.15 }: { score: number; rad
 
   return (
     <group>
-      {/* Background ring */}
       <mesh geometry={bgGeometry}>
-        <meshStandardMaterial color="#1a1a2e" transparent opacity={0.4} />
+        <meshStandardMaterial color="#1a1a0e" transparent opacity={0.4} />
       </mesh>
-      
-      {/* Score arc */}
       <mesh ref={ringRef} geometry={ringGeometry} position={[0, 0, -0.04]}>
-        <meshStandardMaterial
-          color="#7c3aed"
-          emissive="#7c3aed"
-          emissiveIntensity={0.4}
-          metalness={0.8}
-          roughness={0.2}
-        />
+        <meshStandardMaterial color="#c8860a" emissive="#c8860a" emissiveIntensity={0.5} metalness={0.9} roughness={0.15} />
       </mesh>
-
-      {/* Glow ring */}
       <mesh ref={glowRef}>
         <torusGeometry args={[radius - thickness / 2, thickness * 1.5, 8, 64]} />
-        <meshBasicMaterial color="#7c3aed" transparent opacity={0.08} />
+        <meshBasicMaterial color="#c8860a" transparent opacity={0.1} />
       </mesh>
     </group>
   );
@@ -74,7 +56,6 @@ function ScoreRing({ score, radius = 2, thickness = 0.15 }: { score: number; rad
 
 function ScoreParticles({ count = 30, radius = 2 }) {
   const ref = useRef<THREE.Points>(null);
-
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -91,18 +72,14 @@ function ScoreParticles({ count = 30, radius = 2 }) {
     if (!ref.current) return;
     ref.current.rotation.z = state.clock.elapsedTime * 0.1;
     const arr = ref.current.geometry.attributes.position.array as Float32Array;
-    for (let i = 0; i < count; i++) {
-      arr[i * 3 + 2] = Math.sin(state.clock.elapsedTime + i) * 0.15;
-    }
+    for (let i = 0; i < count; i++) arr[i * 3 + 2] = Math.sin(state.clock.elapsedTime + i) * 0.15;
     ref.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (
     <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial size={0.04} color="#14b8a6" transparent opacity={0.6} blending={THREE.AdditiveBlending} />
+      <bufferGeometry><bufferAttribute attach="attributes-position" args={[positions, 3]} /></bufferGeometry>
+      <pointsMaterial size={0.04} color="#daa520" transparent opacity={0.7} blending={THREE.AdditiveBlending} />
     </points>
   );
 }
@@ -110,23 +87,10 @@ function ScoreParticles({ count = 30, radius = 2 }) {
 function ScoreText({ score }: { score: number }) {
   return (
     <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.3}>
-      <Text
-        fontSize={1.2}
-        font="/fonts/SpaceGrotesk-Bold.ttf"
-        color="#e2e8f0"
-        anchorX="center"
-        anchorY="middle"
-        position={[0, 0.15, 0.1]}
-      >
+      <Text fontSize={1.2} color="#f5e6c8" anchorX="center" anchorY="middle" position={[0, 0.15, 0.1]}>
         {score}
       </Text>
-      <Text
-        fontSize={0.25}
-        color="#94a3b8"
-        anchorX="center"
-        anchorY="middle"
-        position={[0, -0.6, 0.1]}
-      >
+      <Text fontSize={0.25} color="#a08060" anchorX="center" anchorY="middle" position={[0, -0.6, 0.1]}>
         Career Score
       </Text>
     </Float>
@@ -135,7 +99,6 @@ function ScoreText({ score }: { score: number }) {
 
 function CoreSphere() {
   const ref = useRef<THREE.Mesh>(null);
-  
   useFrame((state) => {
     if (ref.current) {
       ref.current.rotation.x = state.clock.elapsedTime * 0.2;
@@ -146,17 +109,7 @@ function CoreSphere() {
   return (
     <mesh ref={ref} scale={0.6}>
       <icosahedronGeometry args={[1, 1]} />
-      <MeshDistortMaterial
-        color="#7c3aed"
-        emissive="#7c3aed"
-        emissiveIntensity={0.2}
-        roughness={0.4}
-        metalness={0.8}
-        distort={0.3}
-        speed={2}
-        transparent
-        opacity={0.15}
-      />
+      <MeshDistortMaterial color="#8b1a1a" emissive="#c8860a" emissiveIntensity={0.15} roughness={0.3} metalness={0.9} distort={0.3} speed={2} transparent opacity={0.2} />
     </mesh>
   );
 }
@@ -165,10 +118,9 @@ export function CareerScore3D({ score = 72, className = "" }: { score?: number; 
   return (
     <div className={`w-full aspect-square max-w-[320px] ${className}`}>
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 2]}>
-        <ambientLight intensity={0.4} />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color="#7c3aed" />
-        <pointLight position={[-5, -3, 3]} intensity={0.4} color="#14b8a6" />
-        
+        <ambientLight intensity={0.5} />
+        <pointLight position={[5, 5, 5]} intensity={0.9} color="#daa520" />
+        <pointLight position={[-5, -3, 3]} intensity={0.4} color="#8b1a1a" />
         <ScoreRing score={score} />
         <ScoreParticles />
         <ScoreText score={score} />

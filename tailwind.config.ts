@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Space Grotesk", "sans-serif"],
+        display: ["Playfair Display", "serif"],
         body: ["Inter", "sans-serif"],
       },
       colors: {
@@ -62,12 +62,15 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         vedoryn: {
+          gold: "hsl(var(--vedoryn-gold))",
+          maroon: "hsl(var(--vedoryn-maroon))",
+          emerald: "hsl(var(--vedoryn-emerald))",
+          midnight: "hsl(var(--vedoryn-midnight))",
           glow: "hsl(var(--vedoryn-glow))",
           cyan: "hsl(var(--vedoryn-cyan))",
           orange: "hsl(var(--vedoryn-orange))",
           green: "hsl(var(--vedoryn-green))",
           pink: "hsl(var(--vedoryn-pink))",
-          gold: "hsl(var(--vedoryn-gold))",
         },
       },
       borderRadius: {
@@ -101,8 +104,8 @@ export default {
           "50%": { transform: "translateY(-10px)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(250 80% 55% / 0.2)" },
-          "50%": { boxShadow: "0 0 40px hsl(250 80% 55% / 0.4)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(45 93% 47% / 0.2)" },
+          "50%": { boxShadow: "0 0 50px hsl(45 93% 47% / 0.5)" },
         },
         "score-fill": {
           "0%": { strokeDashoffset: "283" },
@@ -112,6 +115,14 @@ export default {
           "0%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
           "100%": { backgroundPosition: "0% 50%" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "royal-pulse": {
+          "0%, 100%": { opacity: "0.6" },
+          "50%": { opacity: "1" },
         },
       },
       animation: {
@@ -124,6 +135,8 @@ export default {
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "score-fill": "score-fill 2s ease-out forwards",
         "gradient-shift": "gradient-shift 8s ease infinite",
+        "shimmer": "shimmer 3s linear infinite",
+        "royal-pulse": "royal-pulse 4s ease-in-out infinite",
       },
     },
   },
