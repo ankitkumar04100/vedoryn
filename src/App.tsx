@@ -21,6 +21,7 @@ import ProofLayerPage from "./pages/dashboard/ProofLayerPage";
 import WellnessPage from "./pages/dashboard/WellnessPage";
 import GamificationPage from "./pages/dashboard/GamificationPage";
 import RecruiterPage from "./pages/dashboard/RecruiterPage";
+import ProfilePage from "./pages/dashboard/ProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="wellness" element={<WellnessPage />} />
               <Route path="gamification" element={<GamificationPage />} />
               <Route path="recruiter" element={<RecruiterPage />} />
+              <Route path="profile" element={<ProfilePage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

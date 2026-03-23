@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { Brain, TrendingUp, Target, Briefcase, Mic, BookOpen, ArrowUpRight } from "lucide-react";
+import { Brain, TrendingUp, Target, Briefcase, Mic, BookOpen, ArrowUpRight, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CareerScore3D } from "@/components/dashboard/CareerScore3D";
 import { useAuth } from "@/hooks/useAuth";
 
 const quickActions = [
-  { label: "Practice Interview", icon: Mic, href: "/dashboard/interviews", color: "bg-vedoryn-pink/10 text-vedoryn-pink hover:bg-vedoryn-pink/20" },
-  { label: "View Roadmap", icon: Target, href: "/dashboard/roadmap", color: "bg-vedoryn-cyan/10 text-vedoryn-cyan hover:bg-vedoryn-cyan/20" },
+  { label: "Practice Interview", icon: Mic, href: "/dashboard/interviews", color: "bg-accent/10 text-accent hover:bg-accent/20" },
+  { label: "View Roadmap", icon: Target, href: "/dashboard/roadmap", color: "bg-vedoryn-emerald/10 text-vedoryn-emerald hover:bg-vedoryn-emerald/20" },
   { label: "Study Planner", icon: BookOpen, href: "/dashboard/study", color: "bg-vedoryn-orange/10 text-vedoryn-orange hover:bg-vedoryn-orange/20" },
   { label: "Browse Jobs", icon: Briefcase, href: "/dashboard/jobs", color: "bg-vedoryn-green/10 text-vedoryn-green hover:bg-vedoryn-green/20" },
 ];
@@ -24,20 +24,20 @@ export default function DashboardOverview() {
 
   const quickStats = [
     { label: "Career Score", value: String(careerScore), icon: Brain, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Skills", value: String(skillCount), icon: TrendingUp, color: "text-vedoryn-cyan", bg: "bg-vedoryn-cyan/10" },
-    { label: "Level", value: String(level), icon: Mic, color: "text-vedoryn-pink", bg: "bg-vedoryn-pink/10" },
-    { label: "XP", value: String(xp), icon: Briefcase, color: "text-vedoryn-green", bg: "bg-vedoryn-green/10" },
+    { label: "Skills", value: String(skillCount), icon: TrendingUp, color: "text-vedoryn-emerald", bg: "bg-vedoryn-emerald/10" },
+    { label: "Level", value: String(level), icon: Crown, color: "text-vedoryn-gold", bg: "bg-vedoryn-gold/10" },
+    { label: "XP", value: String(xp), icon: Briefcase, color: "text-accent", bg: "bg-accent/10" },
   ];
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-8 max-w-6xl">
       <motion.div variants={item}>
         <h1 className="font-display text-3xl font-bold">
-          Welcome{isGuest ? ", Guest" : `, ${displayName}`}! 👋
+          Welcome{isGuest ? ", Guest" : `, ${displayName}`}! 👑
         </h1>
         <p className="text-muted-foreground mt-1">
           {profile?.career_goal
-            ? `Tracking your path to ${profile.career_goal}`
+            ? `Tracking your royal path to ${profile.career_goal}`
             : "Set your career goal to get personalized insights"}
         </p>
         {!profile?.onboarding_complete && !isGuest && (
@@ -50,7 +50,7 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {quickStats.map((stat) => (
           <motion.div key={stat.label} variants={item} whileHover={{ scale: 1.03, y: -2 }} transition={{ type: "spring", stiffness: 300 }}
-            className="p-5 rounded-xl bg-card border border-border shadow-card hover:shadow-elevated transition-shadow cursor-default">
+            className="p-5 rounded-xl bg-card border border-border shadow-card hover:shadow-elevated transition-shadow cursor-default royal-glow">
             <div className={`w-10 h-10 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
               <stat.icon className={`w-5 h-5 ${stat.color}`} />
             </div>
@@ -62,8 +62,8 @@ export default function DashboardOverview() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         <motion.div variants={item}
-          className="p-6 rounded-xl bg-card border border-border shadow-card flex flex-col items-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-vedoryn-cyan/5" />
+          className="p-6 rounded-xl bg-card border border-border shadow-card flex flex-col items-center relative overflow-hidden royal-border">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <h3 className="font-display font-semibold text-lg mb-2 relative z-10">Career Score</h3>
           <CareerScore3D score={careerScore} className="relative z-10 max-w-[200px]" />
           <Link to="/dashboard/career-score" className="text-sm text-primary font-medium flex items-center gap-1 hover:underline relative z-10 mt-2">
@@ -94,12 +94,15 @@ export default function DashboardOverview() {
             {profile?.skills && profile.skills.length > 0 && (
               <div className="flex flex-wrap gap-1 pt-2">
                 {profile.skills.slice(0, 6).map(s => (
-                  <span key={s} className="px-2 py-0.5 text-xs rounded-md bg-secondary font-medium">{s}</span>
+                  <span key={s} className="px-2 py-0.5 text-xs rounded-md bg-primary/10 text-primary font-medium">{s}</span>
                 ))}
                 {profile.skills.length > 6 && <span className="text-xs text-muted-foreground">+{profile.skills.length - 6}</span>}
               </div>
             )}
           </div>
+          <Link to="/dashboard/profile" className="mt-4 inline-flex items-center text-sm text-primary font-medium hover:underline">
+            View Full Profile <ArrowUpRight className="w-3 h-3 ml-1" />
+          </Link>
         </motion.div>
       </div>
     </motion.div>
