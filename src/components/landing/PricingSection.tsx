@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, Clock } from "lucide-react";
+import { Check, Sparkles, Clock, Crown } from "lucide-react";
 
 const plans = [
   {
@@ -15,7 +15,7 @@ const plans = [
     highlight: false,
   },
   {
-    name: "Pro",
+    name: "Royal Pro",
     originalPrice: "₹499",
     price: "₹99",
     period: "/month",
@@ -23,10 +23,10 @@ const plans = [
     features: ["Full Career Score Analytics", "Unlimited AI Interviews", "Smart Job Matching", "1-on-1 AI Mentor", "Resume Analyzer", "Scholarship Finder", "Priority Support"],
     cta: "Go Pro — 2 Months Free",
     highlight: true,
-    badge: "🔥 80% OFF",
+    badge: "👑 80% OFF",
   },
   {
-    name: "Elite",
+    name: "Maharaja Elite",
     originalPrice: "₹1,499",
     price: "₹299",
     period: "/month",
@@ -42,28 +42,18 @@ export function PricingSection() {
   return (
     <section id="pricing" className="py-24 bg-secondary/30">
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-6"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-6">
           <span className="text-sm font-medium text-primary uppercase tracking-widest">Pricing</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold mt-3 mb-4">
             Invest in Your{" "}
-            <span className="text-gradient-accent">Future</span>
+            <span className="text-gradient-royal">Future</span>
           </h2>
         </motion.div>
 
-        {/* Free trial banner */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="max-w-2xl mx-auto mb-12 p-4 rounded-2xl bg-gradient-hero text-primary-foreground text-center"
-        >
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+          className="max-w-2xl mx-auto mb-12 p-4 rounded-2xl bg-gradient-royal text-primary-foreground text-center shadow-royal">
           <div className="flex items-center justify-center gap-2 font-semibold">
-            <Sparkles className="w-5 h-5" />
+            <Crown className="w-5 h-5" />
             All paid plans include 2 months FREE trial — no charge until trial ends
             <Clock className="w-5 h-5" />
           </div>
@@ -72,21 +62,11 @@ export function PricingSection() {
 
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {plans.map((plan, i) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8 }}
-              className={`rounded-2xl p-8 relative ${
-                plan.highlight
-                  ? "bg-gradient-hero text-primary-foreground shadow-glow scale-105"
-                  : "bg-card border border-border"
-              }`}
-            >
+            <motion.div key={plan.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }} whileHover={{ y: -8 }}
+              className={`rounded-2xl p-8 relative ${plan.highlight ? "bg-gradient-royal text-primary-foreground shadow-royal scale-105" : "bg-card border border-border royal-border"}`}>
               {plan.badge && (
-                <div className="absolute -top-3 right-4 px-3 py-1 rounded-full bg-vedoryn-orange text-primary-foreground text-xs font-bold shadow-lg">
+                <div className="absolute -top-3 right-4 px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-bold shadow-lg">
                   {plan.badge}
                 </div>
               )}
@@ -98,30 +78,17 @@ export function PricingSection() {
                   </span>
                 )}
                 <span className="font-display text-4xl font-bold">{plan.price}</span>
-                <span className={`text-sm ${plan.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                  {plan.period}
-                </span>
+                <span className={`text-sm ${plan.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{plan.period}</span>
               </div>
-              <p className={`text-sm mb-6 ${plan.highlight ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                {plan.desc}
-              </p>
+              <p className={`text-sm mb-6 ${plan.highlight ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{plan.desc}</p>
               <Link to="/auth">
-                <Button
-                  className={`w-full font-semibold ${
-                    plan.highlight
-                      ? "bg-background text-foreground hover:bg-background/90"
-                      : "bg-gradient-hero text-primary-foreground hover:opacity-90"
-                  }`}
-                >
+                <Button className={`w-full font-semibold ${plan.highlight ? "bg-background text-foreground hover:bg-background/90" : "bg-gradient-royal text-primary-foreground hover:opacity-90"}`}>
                   {plan.cta}
                 </Button>
               </Link>
               <ul className="mt-6 space-y-3">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 shrink-0" />
-                    {f}
-                  </li>
+                  <li key={f} className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 shrink-0" />{f}</li>
                 ))}
               </ul>
             </motion.div>
