@@ -5,7 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 /* -----------------------------------------------------------
-   HELPER: DETECT TAILWIND DARK MODE
+   DETECT TAILWIND DARK MODE SAFELY
 ----------------------------------------------------------- */
 function useIsDarkMode() {
   if (typeof window === "undefined") return false;
@@ -13,25 +13,25 @@ function useIsDarkMode() {
 }
 
 /* -----------------------------------------------------------
-   PARTICLES (THEME-AWARE COLORS)
+   PARTICLES — THEME AWARE & ALWAYS CLEAR
 ----------------------------------------------------------- */
 function Particles({ count = 260, isDark }: { count: number; isDark: boolean }) {
   const mesh = useRef<THREE.Points>(null);
 
   const palette = isDark
     ? [
-        [0.75, 0.52, 1.0], // bright purple
-        [0.36, 0.95, 0.88], // bright cyan
-        [1.0, 0.55, 0.7], // pink
-        [1.0, 0.65, 0.35], // neon orange
-        [0.45, 1.0, 0.6], // neon green
+        [0.85, 0.65, 1.0], // brighter purple
+        [0.45, 1.0, 0.92], // bright cyan
+        [1.0, 0.60, 0.78], // bright pink
+        [1.0, 0.70, 0.40], // neon orange
+        [0.55, 1.0, 0.70], // neon green
       ]
     : [
-        [0.6, 0.4, 1.0], // primary purple
-        [0.2, 0.8, 0.7], // cyan
-        [1.0, 0.4, 0.6], // pink
-        [1.0, 0.6, 0.2], // orange
-        [0.3, 0.8, 0.4], // green
+        [0.45, 0.30, 0.95], // deeper purple (avoids white fade)
+        [0.15, 0.70, 0.65], // deep cyan
+        [0.90, 0.35, 0.55], // deep pink
+        [0.95, 0.55, 0.10], // orange (visible on white)
+        [0.25, 0.70, 0.35], // green (visible on white)
       ];
 
   const [positions, colors, sizes] = useMemo(() => {
@@ -49,7 +49,7 @@ function Particles({ count = 260, isDark }: { count: number; isDark: boolean }) 
       col[i * 3 + 1] = c[1];
       col[i * 3 + 2] = c[2];
 
-      siz[i] = Math.random() * 3 + 0.7;
+      siz[i] = Math.random() * 2.4 + 0.8;
     }
 
     return [pos, col, siz];
@@ -58,17 +58,18 @@ function Particles({ count = 260, isDark }: { count: number; isDark: boolean }) 
   useFrame((state) => {
     if (!mesh.current) return;
 
-    const time = state.clock.elapsedTime;
+    const t = state.clock.elapsedTime;
     const posAttr = mesh.current.geometry.attributes.position;
     const arr = posAttr.array as Float32Array;
 
     for (let i = 0; i < count; i++) {
-      arr[i * 3 + 1] += Math.sin(time * 0.3 + i * 0.2) * 0.002;
-      arr[i * 3] += Math.cos(time * 0.25 + i * 0.1) * 0.0015;
+      arr[i * 3 + 1] += Math.sin(t * 0.3 + i * 0.2) * 0.0025;
+      arr[i * 3] += Math.cos(t * 0.25 + i * 0.1) * 0.0012;
     }
 
     posAttr.needsUpdate = true;
-    mesh.current.rotation.y = time * 0.03;
+
+    mesh.current.rotation.y = t * 0.035;
   });
 
   return (
@@ -78,20 +79,22 @@ function Particles({ count = 260, isDark }: { count: number; isDark: boolean }) 
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
         <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
+
       <pointsMaterial
-        size={0.06}
+        size={0.065}
         vertexColors
         transparent
-        opacity={0.85}
+        opacity={isDark ? 0.9 : 0.75} // Dark mode brighter, light mode softer
         blending={THREE.AdditiveBlending}
         sizeAttenuation
+        depthWrite={false}
       />
     </points>
   );
 }
 
 /* -----------------------------------------------------------
-   FLOATING NEON ORBS (ADAPT TO THEME)
+   FLOATING ORBS — NOW CLEAR IN BOTH THEMES
 ----------------------------------------------------------- */
 function FloatingOrb({
   position,
@@ -110,16 +113,17 @@ function FloatingOrb({
 
   useFrame((state) => {
     if (!ref.current) return;
+
     const t = state.clock.elapsedTime * speed;
 
-    ref.current.position.y = position[1] + Math.sin(t + index) * 0.5;
-    ref.current.position.x = position[0] + Math.cos(t * 0.8 + index) * 0.35;
+    ref.current.position.y = position[1] + Math.sin(t + index) * 0.45;
+    ref.current.position.x = position[0] + Math.cos(t * 0.75 + index) * 0.35;
   });
 
   return (
     <mesh ref={ref} position={position} scale={scale}>
       <sphereGeometry args={[1, 24, 24]} />
-      <meshBasicMaterial color={color} transparent opacity={0.25} />
+      <meshBasicMaterial color={color} transparent opacity={0.30} />
     </mesh>
   );
 }
@@ -132,9 +136,21 @@ function FloatingOrbs({ isDark }: { isDark: boolean }) {
     group.current.rotation.y = state.clock.elapsedTime * 0.05;
   });
 
-  const colors = isDark
-    ? ["#a855f740", "#2dd4bf40", "#fb718540", "#fb923c40", "#4ade8040"]
-    : ["#7c3aed30", "#14b8a630", "#ec489930", "#f9731630", "#22c55e30"];
+  const orbColors = isDark
+    ? [
+        "#c084fc40", // brighter purple
+        "#5eead440", // teal
+        "#fb718540", // rose
+        "#fb923c40", // orange
+        "#4ade8040", // lime
+      ]
+    : [
+        "#7c3aed25", // purple soft
+        "#14b8a625", // cyan soft
+        "#ec489925", // pink soft
+        "#f9731625", // orange soft
+        "#22c55e25", // green soft
+      ];
 
   const orbs = useMemo(
     () =>
@@ -144,9 +160,9 @@ function FloatingOrbs({ isDark }: { isDark: boolean }) {
           Math.cos(i * 0.8) * 2,
           Math.sin(i * 0.5) * 3 - 2,
         ] as [number, number, number],
-        color: colors[i],
-        scale: 0.35 + Math.random() * 0.35,
-        speed: 0.3 + Math.random() * 0.4,
+        color: orbColors[i],
+        scale: 0.38 + Math.random() * 0.32,
+        speed: 0.28 + Math.random() * 0.42,
         index: i,
       })),
     [isDark]
@@ -162,8 +178,7 @@ function FloatingOrbs({ isDark }: { isDark: boolean }) {
 }
 
 /* -----------------------------------------------------------
-   MAIN EXPORT — FULL PREMIUM BACKGROUND
-   (THEME AWARE + NO BUGS + NO FLASH)
+   FINAL EXPORT — PERFECT DAY/NIGHT MODE BACKGROUND
 ----------------------------------------------------------- */
 export function ParticleField() {
   const isDark = useIsDarkMode();
@@ -175,19 +190,20 @@ export function ParticleField() {
         dpr={[1, 1.5]}
         gl={{ antialias: false, alpha: true }}
       >
-        {/* Depth fog theme-adaptive */}
+        {/* Fog — now subtle and theme-correct */}
         <fog
           attach="fog"
-          args={[isDark ? "#000000" : "#ffffff", 6, 18]}
+          args={[
+            isDark ? "rgba(0,0,0,0.7)" : "rgba(255,255,255,0.4)",
+            7,
+            18,
+          ]}
         />
 
-        {/* Particles */}
         <Particles count={260} isDark={isDark} />
 
-        {/* Floating Orbs */}
         <FloatingOrbs isDark={isDark} />
 
-        {/* Transparent BG (Canvas inherits page color) */}
         <color attach="background" args={["transparent"]} />
       </Canvas>
     </div>
