@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
-  Sparkles,
   TrendingUp,
   Zap,
   Users,
@@ -13,39 +12,42 @@ import { ParticleField } from "./ParticleField";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden bg-background">
-      {/* Particle Background */}
+    <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-background">
+      
+      {/* BACKGROUND PARTICLES */}
       <ParticleField />
 
-      {/* Dynamic Gradient Blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-1/4 left-1/4 w-[28rem] h-[28rem] bg-primary/15 dark:bg-primary/10 rounded-full blur-3xl animate-float" />
-        <div
-          className="absolute bottom-1/4 right-1/4 w-[22rem] h-[22rem] bg-purple-500/20 dark:bg-purple-600/10 rounded-full blur-3xl animate-float"
-          style={{ animationDelay: "2.5s" }}
+      {/* FLOATING THEME-AWARE GRADIENT BLOBS */}
+      <div className="absolute inset-0 pointer-events-none -z-10">
+        <div className="absolute top-1/4 left-1/4 w-[28rem] h-[28rem] rounded-full blur-3xl animate-float 
+          bg-primary/20 dark:bg-primary/10" 
         />
-        <div
-          className="absolute top-1/2 right-1/3 w-[18rem] h-[18rem] bg-amber-500/20 dark:bg-amber-400/10 rounded-full blur-3xl animate-float"
+        <div className="absolute bottom-1/4 right-1/4 w-[22rem] h-[22rem] rounded-full blur-3xl animate-float
+          bg-purple-500/20 dark:bg-purple-500/10"
+          style={{ animationDelay: "2s" }}
+        />
+        <div className="absolute top-1/2 right-1/3 w-[18rem] h-[18rem] rounded-full blur-3xl animate-float
+          bg-amber-500/20 dark:bg-amber-400/10"
           style={{ animationDelay: "4s" }}
         />
       </div>
 
-      {/* Content */}
+      {/* CONTENT */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
 
-          {/* Tagline Pill */}
+          {/* TAGLINE PILL */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="
-              inline-flex items-center gap-2 px-5 py-2 
+              inline-flex items-center gap-2 px-6 py-2 
               rounded-full 
-              backdrop-blur-md
+              backdrop-blur-xl
               bg-white/40 dark:bg-white/10
               border border-white/50 dark:border-white/20
-              shadow-lg dark:shadow-none
+              shadow-lg
               text-primary font-medium text-sm
               mb-8
             "
@@ -54,9 +56,9 @@ export function HeroSection() {
             The Royal AI Career Intelligence Engine
           </motion.div>
 
-          {/* Main Heading */}
+          {/* MAIN HEADING */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
             className="
@@ -69,14 +71,18 @@ export function HeroSection() {
             "
           >
             From Confusion{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 dark:from-primary dark:to-purple-400">
+            <span className="
+              text-transparent bg-clip-text 
+              bg-gradient-to-r from-primary to-purple-500 
+              dark:from-primary dark:to-purple-400
+            ">
               to Control
             </span>
           </motion.h1>
 
-          {/* Description */}
+          {/* DESCRIPTION */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="
@@ -86,28 +92,31 @@ export function HeroSection() {
               mb-10 leading-relaxed
             "
           >
-            Vedoryn transforms your career journey with AI-driven intelligence.
-            Track real progress, predict outcomes, and build your future with 
-            clarity, confidence, and data-backed decisions.
+            Vedoryn transforms your career journey with AI‑driven intelligence.
+            Track real progress, predict outcomes, and build your future with
+            confidence, clarity, and proven data.
           </motion.p>
 
-          {/* Buttons */}
+          {/* BUTTONS */}
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
+            {/* Start Button */}
             <Link to="/auth">
               <Button
                 size="lg"
                 className="
                   px-10 text-base font-semibold 
-                  bg-gradient-to-r from-primary to-purple-500
+                  bg-gradient-to-r from-primary to-purple-500 
                   dark:from-primary dark:to-purple-600
                   text-white 
                   shadow-lg hover:shadow-xl 
-                  transition-all duration-300 hover:scale-105
+                  hover:scale-[1.06] active:scale-[0.97]
+                  transition-all duration-300
+                  rounded-xl
                 "
               >
                 <Crown className="w-4 h-4 mr-2" />
@@ -116,6 +125,7 @@ export function HeroSection() {
               </Button>
             </Link>
 
+            {/* How it Works */}
             <a href="#how-it-works">
               <Button
                 size="lg"
@@ -124,7 +134,9 @@ export function HeroSection() {
                   px-10 text-base font-semibold 
                   backdrop-blur-xl
                   border border-foreground/20 dark:border-white/20 
-                  hover:scale-105 transition-all duration-300
+                  hover:scale-[1.06] active:scale-[0.97]
+                  transition-all duration-300
+                  rounded-xl
                 "
               >
                 See How It Works
@@ -132,9 +144,9 @@ export function HeroSection() {
             </a>
           </motion.div>
 
-          {/* Stats Section */}
+          {/* STATS CARDS */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.45 }}
             className="
@@ -146,27 +158,27 @@ export function HeroSection() {
               { icon: TrendingUp, label: "Career Score", value: "AI-Powered" },
               { icon: Zap, label: "Real-Time", value: "Predictions" },
               { icon: Users, label: "AI Mentor", value: "24/7 Access" },
-            ].map((stat) => (
+            ].map((stat, i) => (
               <motion.div
                 key={stat.label}
-                whileHover={{ scale: 1.1, y: -4 }}
+                whileHover={{ scale: 1.08, y: -4 }}
                 transition={{ type: "spring", stiffness: 300 }}
                 className="
-                  rounded-xl p-4 cursor-default
+                  p-4 rounded-xl cursor-default
                   backdrop-blur-xl 
                   border border-white/40 dark:border-white/10
-                  bg-white/20 dark:bg-white/5
-                  shadow-lg dark:shadow-none
+                  bg-white/25 dark:bg-white/5
+                  shadow-lg dark:shadow-[0_0_20px_rgba(255,255,255,0.05)]
+                  transition-all
                 "
               >
                 <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-display font-bold text-foreground">
-                  {stat.value}
-                </div>
+                <div className="font-display font-bold text-foreground">{stat.value}</div>
                 <div className="text-xs text-muted-foreground">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
+
         </div>
       </div>
     </section>
