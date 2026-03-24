@@ -10,37 +10,34 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function handleAuth() {
+    async function run() {
       try {
-        // Get the logged‑in user after OAuth redirect
         const { data, error } = await supabase.auth.getUser();
-
         if (error) throw error;
 
-        const user = data?.user;
+        const user = data.user;
         if (!user) {
-          toast.error("Unable to complete sign‑in. Please try again.");
+          toast.error("Authentication failed");
           return navigate("/auth");
         }
 
-        // Ensure profile row exists
         await ensureProfile(user.id);
 
-        toast.success("Successfully signed in! Welcome to Vedoryn 👑");
-        navigate("/onboarding");
+        toast.success("Signed in successfully!");
+        navigate("/onboarding");  
       } catch (err: any) {
-        toast.error(err?.message || "OAuth login failed");
+        toast.error(err.message || "Login error");
         navigate("/auth");
       }
     }
 
-    handleAuth();
+    run();
   }, []);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-background">
       <p className="text-muted-foreground animate-pulse text-sm">
-        Completing sign‑in…
+        Completing login…
       </p>
     </div>
   );
