@@ -1,279 +1,175 @@
 "use client";
 
-import { useRef, useMemo, useEffect, useState } from "react";
-import { Canvas, useFrame, extend } from "@react-three/fiber";
-import * as THREE from "three";
+import { useEffect, useRef } from "react";
 
-/* =========================================================================
-   1. Detect Tailwind Dark Mode (Real-time reactive)
-=========================================================================== */
+/* ===========================================================
+   Detect Tailwind Dark Mode (auto-reactive)
+=========================================================== */
 function useIsDarkMode() {
-  const [isDark, setIsDark] = useState(false);
+  return document.documentElement.classList.contains("dark");
+}
+
+/* ===========================================================
+   MAIN EXPORT
+=========================================================== */
+export function ParticleField() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const check = () =>
-      setIsDark(document.documentElement.classList.contains("dark"));
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    check();
-    const observer = new MutationObserver(check);
-    observer.observe(document.documentElement, { attributes: true });
+    const isDark = useIsDarkMode();
+    const ctx = canvas.getContext("2d", { alpha: true })!;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
 
-    return () => observer.disconnect();
+    /* ===========================================================
+       PARTICLE SYSTEM CONFIG
+    ============================================================ */
+    const particleCount = width < 768 ? 45 : 110; // mobile optimized
+    const orbsCount = 4;
+
+    const goldLight = isDark ? "#fef3c7" : "#fbbf24"; // soft gold
+    const goldDark = isDark ? "#facc15" : "#d97706"; // deep royal gold
+    const shimmerColor = isDark ? "#fff7c2" : "#ffebb6"; // rare shimmer
+
+    const particles = [];
+    const orbs = [];
+
+    /* ===========================================================
+       CREATE PARTICLES
+    ============================================================ */
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        z: Math.random() * 3, // depth layer
+        size: Math.random() * 2.2 + 0.4,
+        speed: Math.random() * 0.4 + 0.15,
+        opacity: Math.random() * 0.6 + 0.25,
+      });
+    }
+
+    /* ===========================================================
+       CREATE ORBS (soft glowing circles)
+    ============================================================ */
+    for (let i = 0; i < orbsCount; i++) {
+      orbs.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 80 + 40,
+        speed: Math.random() * 0.3 + 0.05,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    /* ===========================================================
+       MOUSE INTERACTION
+    ============================================================ */
+    const mouse = { x: width / 2, y: height / 2 };
+
+    window.addEventListener("mousemove", (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    /* ===========================================================
+       MAIN ANIMATION LOOP
+    ============================================================ */
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      /* ==== VIGNETTE BACKDROP ==== */
+      const gradient = ctx.createRadialGradient(
+        width / 2,
+        height / 2,
+        0,
+        width / 2,
+        height / 2,
+        width * 0.7
+      );
+      gradient.addColorStop(0, isDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.3)");
+      gradient.addColorStop(1, isDark ? "rgba(0,0,0,0.95)" : "rgba(255,255,255,0.1)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      /* ==== SOFT BREATHING AURORA GLOW ==== */
+      const pulse = (Math.sin(Date.now() / 6000) + 1) / 10 + 0.15;
+      ctx.globalAlpha = pulse;
+      ctx.fillStyle = isDark ? "#facc15" : "#fbbf24";
+      ctx.fillRect(0, 0, width, height * 0.15);
+      ctx.globalAlpha = 1;
+
+      /* ==== DRAW ORBS ==== */
+      orbs.forEach((o, i) => {
+        o.phase += o.speed / 30;
+        o.x += Math.cos(o.phase) * 0.4;
+        o.y += Math.sin(o.phase) * 0.4;
+
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, o.radius, 0, Math.PI * 2);
+        ctx.fillStyle = isDark 
+          ? "rgba(250, 204, 21, 0.05)" 
+          : "rgba(251, 191, 36, 0.06)";
+        ctx.fill();
+      });
+
+      /* ==== PARTICLES ==== */
+      particles.forEach((p) => {
+        p.y -= p.speed * (p.z + 0.5);
+
+        if (p.y < -10) {
+          p.y = height + 10;
+          p.x = Math.random() * width;
+        }
+
+        // Mouse repulsion
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          p.x += dx / dist;
+          p.y += dy / dist;
+        }
+
+        // Glow
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.z, 0, Math.PI * 2);
+        ctx.fillStyle = Math.random() < 0.002 
+          ? shimmerColor 
+          : (p.z > 2 ? goldDark : goldLight);
+        ctx.globalAlpha = p.opacity;
+        ctx.fill();
+      });
+
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    /* ===========================================================
+       HANDLE RESIZE
+    ============================================================ */
+    const resize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
   }, []);
 
-  return isDark;
-}
-
-/* =========================================================================
-   2. Royal Aurora Shader Material (GLSL)
-=========================================================================== */
-
-class AuroraMaterial extends THREE.ShaderMaterial {
-  constructor(isDark: boolean) {
-    const darkColor1 = new THREE.Color("#8b5cf6"); // purple
-    const darkColor2 = new THREE.Color("#fbbf24"); // gold
-
-    const lightColor1 = new THREE.Color("#6d28d9");
-    const lightColor2 = new THREE.Color("#fb923c");
-
-    super({
-      uniforms: {
-        uTime: { value: 0 },
-        uColor1: { value: isDark ? darkColor1 : lightColor1 },
-        uColor2: { value: isDark ? darkColor2 : lightColor2 },
-        uStrength: { value: isDark ? 1.25 : 0.85 }
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          vec3 transformed = position;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform vec3 uColor1;
-        uniform vec3 uColor2;
-        uniform float uStrength;
-
-        varying vec2 vUv;
-
-        void main() {
-          float wave = sin(vUv.x * 8.0 + uTime * 0.9) * 0.25 +
-                       cos(vUv.y * 5.0 + uTime * 1.5) * 0.25;
-
-          float blend = smoothstep(0.0, 1.0, vUv.y + wave);
-
-          vec3 color = mix(uColor1, uColor2, blend) * uStrength;
-
-          float alpha = blend * 0.85;
-
-          gl_FragColor = vec4(color, alpha);
-        }
-      `,
-      transparent: true,
-      depthWrite: false
-    });
-  }
-}
-
-extend({ AuroraMaterial });
-
-/* =========================================================================
-   3. Aurora Background Plane
-=========================================================================== */
-function AuroraPlane({ isDark }: { isDark: boolean }) {
-  const mat = useRef<any>();
-
-  useFrame(({ clock }) => {
-    if (mat.current) mat.current.uniforms.uTime.value = clock.elapsedTime;
-  });
-
   return (
-    <mesh position={[0, 0, -6]} scale={[18, 10, 1]}>
-      <planeGeometry args={[1, 1, 64, 64]} />
-      {/* @ts-ignore */}
-      <auroraMaterial ref={mat} args={[isDark]} />
-    </mesh>
-  );
-}
-
-/* =========================================================================
-   4. Royal Dust Particles (Gold ambient layer)
-=========================================================================== */
-function GoldDust({ isDark }: { isDark: boolean }) {
-  const count = typeof window !== "undefined" && window.innerWidth < 768 ? 50 : 110;
-
-  const mesh = useRef<THREE.Points>(null);
-
-  const { positions, speeds, sizes } = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const spd = new Float32Array(count);
-    const size = new Float32Array(count);
-
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 18;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 6;
-
-      spd[i] = Math.random() * 0.002 + 0.001;
-      size[i] = Math.random() * 1.2 + 0.4;
-    }
-
-    return { positions: pos, speeds: spd, sizes: size };
-  }, [count]);
-
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-
-    if (!mesh.current) return;
-    const arr = mesh.current.geometry.attributes.position.array as Float32Array;
-
-    for (let i = 0; i < count; i++) {
-      arr[i * 3 + 1] += speeds[i];
-      if (arr[i * 3 + 1] > 5) arr[i * 3 + 1] = -5 - Math.random() * 2;
-
-      // Soft mouse repulsion
-      const dx = arr[i * 3] - state.pointer.x * 5;
-      const dy = arr[i * 3 + 1] - state.pointer.y * 3;
-      const dist = dx * dx + dy * dy;
-
-      if (dist < 1.2) {
-        arr[i * 3] += dx * 0.02;
-        arr[i * 3 + 1] += dy * 0.02;
-      }
-    }
-
-    mesh.current.geometry.attributes.position.needsUpdate = true;
-  });
-
-  return (
-    <points ref={mesh}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.06}
-        color={isDark ? "#fcd34d" : "#fbbf24"}
-        transparent
-        opacity={isDark ? 0.9 : 0.7}
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-      />
-    </points>
-  );
-}
-
-/* =========================================================================
-   5. Royal Glow Orbs (Medium layer)
-=========================================================================== */
-function GlowOrbs({ isDark }: { isDark: boolean }) {
-  const orbCount = 5;
-  const refs = useRef<THREE.Mesh[]>([]);
-
-  useFrame(({ clock }) => {
-    refs.current.forEach((m, i) => {
-      if (!m) return;
-      const t = clock.elapsedTime * (0.25 + i * 0.05);
-      m.position.y = Math.sin(t + i) * 1.2;
-      m.position.x = Math.cos(t * 0.6 + i) * 1.5;
-      m.material.opacity = (Math.sin(t * 0.8 + i) + 1) / 4 + 0.2;
-    });
-  });
-
-  const colors = isDark
-    ? ["#facc15", "#fbbf24", "#fde047", "#fef08a", "#eab308"]
-    : ["#f59e0b", "#fbbf24", "#fcd34d", "#fef08a", "#f97316"];
-
-  return (
-    <>
-      {Array.from({ length: orbCount }).map((_, i) => (
-        <mesh
-          key={i}
-          ref={(el) => (refs.current[i] = el!)}
-          position={[Math.sin(i) * 3, Math.cos(i) * 2, -2]}
-          scale={[0.9, 0.9, 0.9]}
-        >
-          <sphereGeometry args={[1, 32, 32]} />
-          <meshBasicMaterial
-            transparent
-            color={colors[i]}
-            opacity={0.3}
-          />
-        </mesh>
-      ))}
-    </>
-  );
-}
-
-/* =========================================================================
-   6. AI Gold Connection Lines (rare, intelligent movement)
-=========================================================================== */
-function AIConnectionLines({ isDark }: { isDark: boolean }) {
-  const lineRef = useRef<THREE.Line>(null);
-
-  const points = useMemo(() => {
-    let pts = [];
-    for (let i = 0; i < 5; i++) {
-      pts.push(new THREE.Vector3(
-        (Math.random() - 0.5) * 6,
-        (Math.random() - 0.5) * 3,
-        -1.5
-      ));
-    }
-    return pts;
-  }, []);
-
-  const geometry = useMemo(() => new THREE.BufferGeometry().setFromPoints(points), [points]);
-
-  useFrame(({ clock }) => {
-    if (lineRef.current) {
-      lineRef.current.material.opacity = Math.sin(clock.elapsedTime * 0.6) * 0.5 + 0.5;
-    }
-  });
-
-  return (
-    <line ref={lineRef} geometry={geometry}>
-      <lineBasicMaterial
-        color={isDark ? "#fcd34d" : "#d97706"}
-        transparent
-        linewidth={1}
-        opacity={0.6}
-      />
-    </line>
-  );
-}
-
-/* =========================================================================
-   7. MAIN EXPORT — FULL ROYAL FIELD
-=========================================================================== */
-export function ParticleField() {
-  const isDark = useIsDarkMode();
-
-  return (
-    <div className="absolute inset-0 pointer-events-none -z-10">
-      <Canvas
-        camera={{ position: [0, 0, 8], fov: 70 }}
-        dpr={[1, 1.8]}
-        gl={{ antialias: true, alpha: true }}
-      >
-        <ambientLight intensity={isDark ? 0.4 : 0.2} />
-
-        {/* ROYAL BACKGROUND */}
-        <AuroraPlane isDark={isDark} />
-
-        {/* GOLD DUST */}
-        <GoldDust isDark={isDark} />
-
-        {/* ROYAL ORBS */}
-        <GlowOrbs isDark={isDark} />
-
-        {/* AI CONNECTION LINES */}
-        <AIConnectionLines isDark={isDark} />
-
-        <color attach="background" args={["transparent"]} />
-      </Canvas>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="
+        absolute inset-0 
+        w-full h-full
+        pointer-events-none 
+        -z-10
+      "
+    />
   );
 }
