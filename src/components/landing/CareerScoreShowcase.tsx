@@ -1,104 +1,97 @@
-import { motion } from "framer-motion";
-import { CareerScore3D } from "@/components/dashboard/CareerScore3D";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useEffect } from "react";
 
-export function CareerScoreShowcase() {
+interface Props {
+  score: number;
+}
+
+export function UltraCareerScore({ score }: Props) {
+  const rotate = useMotionValue(0);
+  const rotateY = useTransform(rotate, [0, 1], ["0deg", "360deg"]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      rotate.set(rotate.get() + 0.01);
+    }, 16);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const colors = score < 30
+    ? "from-red-500 to-red-700"
+    : score < 60
+    ? "from-orange-400 to-yellow-500"
+    : score < 80
+    ? "from-primary to-purple-400"
+    : "from-emerald-400 to-green-500";
+
   return (
-    <section id="career-score" className="py-32 relative overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.7 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+      className="relative w-[320px] h-[320px] md:w-[420px] md:h-[420px] flex items-center justify-center"
+    >
 
-      {/* Ambient floating glows */}
-      <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-10 left-20 w-96 h-96 bg-primary/10 dark:bg-primary/5 blur-3xl animate-float" />
+      {/* Spotlight Glow Backdrop */}
+      <div
+        className="absolute w-full h-full rounded-full 
+        bg-primary/20 dark:bg-primary/10 blur-[100px] scale-150"
+      />
+
+      {/* Floating Glow Orb */}
+      <motion.div
+        style={{ rotate: rotateY }}
+        className={`
+          absolute w-[260px] h-[260px] md:w-[340px] md:h-[340px] 
+          rounded-full bg-gradient-to-br ${colors}
+          shadow-[0_0_50px_rgba(255,255,255,0.15)]
+          border border-white/20 dark:border-white/10
+          backdrop-blur-xl
+          animate-slow-float
+        `}
+      />
+
+      {/* Inner Pulse Core */}
+      <div className="absolute w-32 h-32 md:w-40 md:h-40 rounded-full 
+        bg-white/40 dark:bg-white/10 blur-2xl animate-pulse-slow" />
+
+      {/* Rotating Neural Rings */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        className="absolute w-[420px] h-[420px] md:w-[500px] md:h-[500px] 
+        rounded-full border border-white/10 dark:border-white/5 
+        backdrop-blur-xl"
+      />
+
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+        className="absolute w-[330px] h-[330px] md:w-[410px] md:h-[410px] 
+        rounded-full border border-primary/20 dark:border-primary/10"
+      />
+
+      {/* Floating Hologram Number */}
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 1 }}
+        className="relative z-10 text-center"
+      >
         <div
-          className="absolute bottom-10 right-20 w-80 h-80 bg-purple-500/10 dark:bg-purple-400/5 blur-3xl animate-float"
-          style={{ animationDelay: "2s" }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-
-          {/* LEFT SIDE CONTENT */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            {/* Accent pill */}
-            <div
-              className="
-                inline-flex items-center px-4 py-1.5 rounded-full 
-                bg-white/30 dark:bg-white/10 backdrop-blur-xl 
-                border border-white/40 dark:border-white/10 
-                text-primary text-sm font-medium shadow-md
-              "
-            >
-              Core Innovation
-            </div>
-
-            {/* Title */}
-            <h2 className="font-display text-4xl md:text-6xl font-bold mt-4 mb-6 text-foreground leading-tight">
-              Vedoryn{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 dark:from-primary dark:to-purple-400">
-                Career Score
-              </span>
-            </h2>
-
-            {/* Description */}
-            <p className="text-muted-foreground leading-relaxed text-lg mb-10 max-w-xl">
-              A dynamic, AI-powered metric that reflects your true career readiness.
-              Your score evolves in real-time based on your skills, tasks,
-              consistency, interview performance, learning habits, and proven growth.
-            </p>
-
-            {/* SCORE TIERS */}
-            <div className="grid grid-cols-2 gap-4 max-w-md">
-              {[
-                { range: "0–30", label: "Beginner", color: "from-red-500/20 to-red-600/30 text-red-600 dark:text-red-400" },
-                { range: "30–60", label: "Developing", color: "from-orange-400/20 to-orange-500/30 text-orange-600 dark:text-orange-400" },
-                { range: "60–80", label: "Competitive", color: "from-primary/20 to-primary/30 text-primary" },
-                { range: "80–100", label: "Industry Ready", color: "from-emerald-400/20 to-emerald-500/30 text-emerald-600 dark:text-emerald-400" },
-              ].map((tier, i) => (
-                <motion.div
-                  key={tier.range}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.12 }}
-                  viewport={{ once: true }}
-                  whileHover={{ scale: 1.07 }}
-                  className={`
-                    px-4 py-4 rounded-xl 
-                    bg-gradient-to-br ${tier.color} 
-                    border border-white/30 dark:border-white/10
-                    backdrop-blur-xl shadow-lg cursor-default
-                    transition-all duration-300 
-                  `}
-                >
-                  <div className="font-display font-bold text-xl mb-1">{tier.range}</div>
-                  <div className="text-sm opacity-80">{tier.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* RIGHT SIDE 3D SCORE */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
-            className="flex justify-center relative"
-          >
-            {/* Spotlight glow behind 3D element */}
-            <div className="absolute w-80 h-80 rounded-full bg-primary/20 dark:bg-primary/10 blur-[90px] -z-10" />
-
-            {/* 3D Component */}
-            <CareerScore3D score={72} />
-          </motion.div>
-
+          className="text-[70px] md:text-[100px] font-display font-bold 
+          bg-clip-text text-transparent 
+          bg-gradient-to-b from-white to-white/60 
+          dark:from-white dark:to-white/70 drop-shadow-lg"
+        >
+          {score}
         </div>
-      </div>
-    </section>
+        <div className="text-lg text-muted-foreground tracking-wide">
+          Career Score
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
