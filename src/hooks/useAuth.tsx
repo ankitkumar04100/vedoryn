@@ -1,34 +1,58 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+"use client";
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+
+/* ============================================================
+   PROFILE TYPE
+============================================================ */
 
 type Profile = {
   id: string;
   user_id: string;
   display_name: string | null;
   avatar_url: string | null;
-  career_goal: string | null;
-  skills: string[] | null;
-  daily_hours: number | null;
-  experience_level: string | null;
-  onboarding_complete: boolean | null;
-  career_score: number | null;
-  xp: number | null;
-  level: number | null;
+
+  /* Onboarding Data */
   age: number | null;
   education_level: string | null;
   current_class: string | null;
   academic_stream: string | null;
   subjects: string[] | null;
   weak_areas: string[] | null;
+
+  career_goal: string | null;
+  long_term_goal: string | null;
+  interests: string[] | null;
+  skills: string[] | null;
+
+  experience_level: string | null;
+  daily_hours: number | null;
+  productivity_level: string | null;
+  learning_style: string | null;
+
   stress_level: number | null;
   motivation_level: number | null;
-  learning_style: string | null;
+
+  onboarding_complete: boolean | null;
+
+  /* Extra App Fields */
+  career_score: number | null;
+  xp: number | null;
+  level: number | null;
   language_preference: string | null;
-  interests: string[] | null;
-  long_term_goal: string | null;
-  productivity_level: string | null;
 };
+
+/* ============================================================
+   CONTEXT TYPE
+============================================================ */
 
 type AuthContextType = {
   user: User | null;
@@ -38,12 +62,23 @@ type AuthContextType = {
   isGuest: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  ensureProfile: (userId: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
-  user: null, session: null, profile: null, loading: true,
-  isGuest: false, signOut: async () => {}, refreshProfile: async () => {},
+  user: null,
+  session: null,
+  profile: null,
+  loading: true,
+  isGuest: false,
+  signOut: async () => {},
+  refreshProfile: async () => {},
+  ensureProfile: async () => {},
 });
+
+/* ============================================================
+   MAIN PROVIDER
+============================================================ */
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -51,37 +86,107 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
-    setProfile(data as Profile | null);
+  /* ============================================================
+     AUTO-CREATE PROFILE FOR NEW USERS
+  ============================================================ */
+  const ensureProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error) console.error("Profile fetch error:", error);
+
+      // Create profile if missing
+      if (!data) {
+        const { error: insertError } = await supabase.from("profiles").insert({
+          user_id: userId,
+          onboarding_complete: false,
+          subjects: [],
+          weak_areas: [],
+          interests: [],
+          skills: [],
+        });
+
+        if (insertError) console.error("Profile creation error:", insertError);
+      }
+    } catch (err) {
+      console.error("ensureProfile() failed", err);
+    }
   };
 
+  /* ============================================================
+     FETCH PROFILE
+  ============================================================ */
+  const fetchProfile = async (userId: string) => {
+    try {
+      // Ensure profile exists first
+      await ensureProfile(userId);
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (!error) setProfile(data as Profile);
+    } catch (err) {
+      console.error("fetchProfile error:", err);
+    }
+  };
+
+  /* ============================================================
+     REFRESH PROFILE
+  ============================================================ */
   const refreshProfile = async () => {
     if (user) await fetchProfile(user.id);
   };
 
+  /* ============================================================
+     AUTH STATE LISTENER
+  ============================================================ */
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        setTimeout(() => fetchProfile(session.user.id), 500);
-      } else {
-        setProfile(null);
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        setSession(session);
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+
+        if (currentUser) {
+          await ensureProfile(currentUser.id);
+          await fetchProfile(currentUser.id);
+        } else {
+          setProfile(null);
+        }
+
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    /* INITIAL SESSION LOAD */
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        await ensureProfile(currentUser.id);
+        await fetchProfile(currentUser.id);
+      }
+
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
+  /* ============================================================
+     SIGN OUT
+  ============================================================ */
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -89,13 +194,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null);
   };
 
+  /* ============================================================
+     GUEST FLAG
+  ============================================================ */
   const isGuest = user?.is_anonymous ?? false;
 
+  /* ============================================================
+     CONTEXT PROVIDER
+  ============================================================ */
+
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, isGuest, signOut, refreshProfile }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        profile,
+        loading,
+        isGuest,
+        signOut,
+        refreshProfile,
+        ensureProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
+
+/* ============================================================
+   HOOK EXPORT
+============================================================ */
 
 export const useAuth = () => useContext(AuthContext);
