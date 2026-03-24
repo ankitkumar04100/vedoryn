@@ -14,8 +14,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { CareerScore3D } from "@/components/dashboard/CareerScore3D";
 import { useAuth } from "@/hooks/useAuth";
+import { CareerScore3D } from "@/components/dashboard/CareerScore3D";
 
 /* ============================================================
    ANIMATION PRESETS
@@ -31,43 +31,46 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 220 } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 220, damping: 14 },
+  },
 };
 
 /* ============================================================
-   AI-Generated Dynamic Insight
+   REAL-TIME AI INSIGHT ENGINE (CLIENT-SIDE SMART LOGIC)
 ============================================================ */
 
 function generateInsight(profile: any) {
-  if (!profile) return "Start your journey to unlock insights.";
+  if (!profile)
+    return "Start your journey to unlock personalized insights.";
 
   const xp = profile.xp ?? 0;
   const skills = profile.skills?.length ?? 0;
-  const level = profile.level ?? 1;
-  const dailyHours = profile.daily_hours ?? 1;
+  const stress = profile.stress_level ?? 5;
   const motivation = profile.motivation_level ?? 5;
+  const hours = profile.daily_hours ?? 1;
 
-  if (skills === 0) return "Add skills to unlock your personalized insights.";
+  // AI-like dynamic messaging (no fake values)
+  if (motivation >= 9)
+    return "🔥 Your motivation is at peak — ideal time to push your roadmap.";
+  if (stress >= 8)
+    return "⚠️ High stress detected — reduce workload to avoid burnout.";
+  if (skills >= 10)
+    return "💡 Your skill stack is expanding fast — consider specializing.";
+  if (xp >= 200)
+    return "🚀 You're gaining XP quickly — your career trajectory is accelerating.";
+  if (hours >= 4)
+    return "⏳ Your daily commitment is impressive — stay consistent!";
+  if (skills === 0)
+    return "✨ Add your first skills to unlock tailored recommendations.";
 
-  if (xp < 50) return "Great start! Keep building XP to unlock more insights.";
-
-  if (motivation >= 8)
-    return "🔥 High motivation detected — accelerate your roadmap!";
-
-  if (dailyHours >= 4)
-    return "Your dedication is impressive. This pace will push you ahead.";
-
-  if (skills > 8)
-    return "You’ve built diverse skills — time to specialize for mastery.";
-
-  if (level >= 3)
-    return "Leveling up fast — your learning velocity is above average.";
-
-  return "Stay consistent — your progress curve is rising.";
+  return "🌟 Keep progressing — your learning curve is rising steadily.";
 }
 
 /* ============================================================
-   QUICK ACTIONS
+   QUICK ACTIONS COMMAND CENTER
 ============================================================ */
 
 const quickActions = [
@@ -76,45 +79,46 @@ const quickActions = [
     icon: Mic,
     href: "/dashboard/interviews",
     color:
-      "bg-accent/10 text-accent hover:bg-accent/20 hover:shadow-accent/20 hover:shadow-lg",
+      "bg-accent/10 text-accent hover:bg-accent/20 hover:shadow-accent/20 hover:shadow-xl",
   },
   {
     label: "View Roadmap",
     icon: Target,
     href: "/dashboard/roadmap",
     color:
-      "bg-vedoryn-emerald/10 text-vedoryn-emerald hover:bg-vedoryn-emerald/20 hover:shadow-emerald-500/20 hover:shadow-lg",
+      "bg-vedoryn-emerald/10 text-vedoryn-emerald hover:bg-vedoryn-emerald/20 hover:shadow-emerald-500/20 hover:shadow-xl",
   },
   {
     label: "Study Planner",
     icon: BookOpen,
     href: "/dashboard/study",
     color:
-      "bg-vedoryn-orange/10 text-vedoryn-orange hover:bg-vedoryn-orange/20 hover:shadow-orange-500/20 hover:shadow-lg",
+      "bg-vedoryn-orange/10 text-vedoryn-orange hover:bg-vedoryn-orange/20 hover:shadow-orange-500/20 hover:shadow-xl",
   },
   {
     label: "Browse Jobs",
     icon: Briefcase,
     href: "/dashboard/jobs",
     color:
-      "bg-vedoryn-green/10 text-vedoryn-green hover:bg-vedoryn-green/20 hover:shadow-green-500/20 hover:shadow-lg",
+      "bg-vedoryn-green/10 text-vedoryn-green hover:bg-vedoryn-green/20 hover:shadow-green-500/20 hover:shadow-xl",
   },
 ];
 
 /* ============================================================
-   DASHBOARD COMPONENT
+   COMPONENT
 ============================================================ */
 
 export default function DashboardOverview() {
   const { profile, isGuest } = useAuth();
 
   const careerScore = profile?.career_score ?? 0;
-  const displayName = profile?.display_name || "Explorer";
+  const displayName =
+    profile?.display_name || (isGuest ? "Guest Explorer" : "Explorer");
   const skillCount = profile?.skills?.length ?? 0;
   const xp = profile?.xp ?? 0;
   const level = profile?.level ?? 1;
 
-  const dynamicInsight = generateInsight(profile);
+  const insight = generateInsight(profile);
 
   const quickStats = [
     {
@@ -155,14 +159,14 @@ export default function DashboardOverview() {
       className="space-y-10 max-w-6xl"
     >
       {/* ============================================================
-          1. WELCOME SECTION (Royal AI Insight)
+          TOP WELCOME SECTION
       ============================================================ */}
       <motion.div variants={item} className="space-y-2">
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-          👑 Welcome back{isGuest ? ", Guest" : `, ${displayName}`}!
+          👑 Welcome back, {displayName}
         </h1>
 
-        <p className="text-muted-foreground text-sm">{dynamicInsight}</p>
+        <p className="text-muted-foreground text-sm">{insight}</p>
 
         {!profile?.onboarding_complete && !isGuest && (
           <Link
@@ -176,23 +180,24 @@ export default function DashboardOverview() {
       </motion.div>
 
       {/* ============================================================
-          2. DYNAMIC STATS GRID
+          LIVE STATS GRID (REAL DATA)
       ============================================================ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {quickStats.map((stat) => (
           <motion.div
             key={stat.label}
             variants={item}
-            whileHover={{ scale: 1.04, y: -2 }}
+            whileHover={{ scale: 1.04, y: -3 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="p-5 rounded-xl bg-card border border-border shadow-card hover:shadow-elevated transition-shadow cursor-default 
-                       backdrop-blur-xl royal-glow"
+            className="p-5 rounded-xl bg-card/60 backdrop-blur-xl border border-border shadow-lg hover:shadow-xl 
+                       royal-glow transition-all"
           >
             <div
               className={`w-10 h-10 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}
             >
               <stat.icon className={`w-5 h-5 ${stat.color}`} />
             </div>
+
             <div className="font-display text-2xl font-bold">{stat.value}</div>
             <div className="text-xs text-muted-foreground mt-1">
               {stat.label}
@@ -202,14 +207,13 @@ export default function DashboardOverview() {
       </div>
 
       {/* ============================================================
-          3. SCORE CARD + ACTION PANEL + PROFILE CARD
+          SCORE PANEL + ACTIONS + PROFILE SNAPSHOT
       ============================================================ */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Career Score */}
+        {/* CAREER SCORE 3D PANEL */}
         <motion.div
           variants={item}
-          className="p-6 rounded-xl bg-card border border-border shadow-card
-                     flex flex-col items-center relative overflow-hidden royal-border"
+          className="p-6 rounded-xl bg-card/60 backdrop-blur-xl border border-border shadow-lg relative overflow-hidden royal-border"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <h3 className="font-display font-semibold text-lg mb-2 relative z-10">
@@ -229,21 +233,21 @@ export default function DashboardOverview() {
           </Link>
         </motion.div>
 
-        {/* Quick Actions */}
+        {/* QUICK ACTION COMMAND CENTER */}
         <motion.div
           variants={item}
-          className="p-6 rounded-xl bg-card border border-border shadow-card"
+          className="p-6 rounded-xl bg-card/60 backdrop-blur-xl border border-border shadow-lg"
         >
           <h3 className="font-display font-semibold text-lg mb-4">
             Quick Actions
           </h3>
+
           <div className="space-y-3">
             {quickActions.map((a) => (
               <Link
                 key={a.label}
                 to={a.href}
-                className={`${a.color} flex items-center gap-3 px-4 py-3 rounded-lg 
-                           transition-all hover:translate-x-1 duration-200`}
+                className={`${a.color} flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:translate-x-1`}
               >
                 <a.icon className="w-5 h-5" />
                 <span className="font-medium text-sm">{a.label}</span>
@@ -252,10 +256,10 @@ export default function DashboardOverview() {
           </div>
         </motion.div>
 
-        {/* Profile Snapshot */}
+        {/* PROFILE SNAPSHOT */}
         <motion.div
           variants={item}
-          className="p-6 rounded-xl bg-card border border-border shadow-card"
+          className="p-6 rounded-xl bg-card/60 backdrop-blur-xl border border-border shadow-lg"
         >
           <h3 className="font-display font-semibold text-lg mb-4">
             Your Profile
